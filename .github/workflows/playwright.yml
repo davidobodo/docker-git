@@ -1,0 +1,47 @@
+name: CI
+
+# Triggers the workflow on push or pull request events
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build and run backend Docker Compose
+      run: |
+        docker-compose -f ./backend/docker-compose.yaml up -d
+
+    - name: Build and run frontend Docker Compose
+      run: |
+        docker-compose -f ./frontend/docker-compose.yaml up -d
+
+    - name: Wait for services
+      run: |
+        echo "Waiting for services to be ready..."
+        # replace with the script that checks your services
+        bash e2e/scripts/wait-for-services.sh
+
+    - name: Install Playwright browsers
+      working-directory: e2e
+      run: |
+        npx playwright install --with-deps
+
+    - name: Run Playwright tests
+      working-directory: e2e
+      run: |
+        npx playwright test
+
+    - name: Clean up Docker Compose for backend
+      run: |
+        docker-compose -f ./backend/docker-compose.yaml down --rmi all
+
+    - name: Clean up Docker Compose for frontend
+      run: |
+        docker-compose -f ./frontend/docker-compose.yaml down --rmi all

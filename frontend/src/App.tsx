@@ -4,8 +4,6 @@ import axios from "axios";
 import { useEffect } from "react";
 
 function App() {
-	const [count, setCount] = useState(0);
-
 	const [list, setList] = useState([]);
 	const onFetch = async () => {
 		try {
@@ -20,6 +18,8 @@ function App() {
 	useEffect(() => {
 		onFetch();
 	}, []);
+
+	console.log(list, "=======THE LIST GOTTEN HERE");
 
 	return (
 		<>
