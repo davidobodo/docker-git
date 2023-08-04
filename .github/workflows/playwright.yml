@@ -28,6 +28,11 @@ jobs:
         # replace with the script that checks your services
         bash e2e/scripts/wait-for-services.sh
 
+    - name: Install e2e dependencies
+      working-directory: e2e
+      run: |
+        npm install
+
     - name: Install Playwright browsers
       working-directory: e2e
       run: |
